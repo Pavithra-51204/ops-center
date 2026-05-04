@@ -16,12 +16,12 @@ require('dotenv').config();
 
 const { Worker } = require('bullmq');
 const nodemailer = require('nodemailer');
-const mongoose   = require('mongoose');
+const mongoose = require('mongoose');
 
 // ── Re-use existing project modules ──────────────────────────────────────────
-const connectDB              = require('./config/db');
-const User                   = require('./models/User');
-const { redisConnection }    = require('./lib/queue');
+const connectDB = require('./config/db');
+const User = require('./models/User');
+const { redisConnection } = require('./lib/queue');
 
 // ── Nodemailer transporter ────────────────────────────────────────────────────
 // Configure via environment variables. Examples:
@@ -39,13 +39,19 @@ const { redisConnection }    = require('./lib/queue');
 //    EMAIL_USER=           EMAIL_PASS=
 //
 const transporter = nodemailer.createTransport({
-  host:   process.env.EMAIL_HOST   || 'smtp.gmail.com',
-  port:   Number(process.env.EMAIL_PORT) || 587,
+  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+  port: Number(process.env.EMAIL_PORT) || 587,
   secure: process.env.EMAIL_SECURE === 'true', // true for port 465
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
+  dnsTimeout: 10000,
+  // Force IPv4
+  family: 4
 });
 
 // ── Helper: Fetch user email from MongoDB ─────────────────────────────────────
@@ -218,7 +224,7 @@ const worker = new Worker(
     // 3. Send the email
     const info = await transporter.sendMail({
       from: `"Ops-Center Alerts" <${process.env.EMAIL_USER}>`,
-      to:   recipient.email,
+      to: recipient.email,
       ...emailPayload,
     });
 
@@ -267,4 +273,4 @@ const shutdown = async (signal) => {
 };
 
 process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT',  () => shutdown('SIGINT'));
+process.on('SIGINT', () => shutdown('SIGINT'));
