@@ -9,6 +9,7 @@ const signToken = (userId) =>
 const setCookieAndRespond = (res, user, statusCode = 200) => {
   const token = signToken(user._id);
 
+  // Set cookie (works when frontend & backend share a domain / same-origin proxy)
   res.cookie('ops_token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -16,8 +17,11 @@ const setCookieAndRespond = (res, user, statusCode = 200) => {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
+  // Also return the token in the body so the frontend can store it
+  // as a Bearer token when running cross-origin (e.g. localhost → Render)
   res.status(statusCode).json({
     success: true,
+    token,
     user: user.toSafeObject(),
   });
 };
