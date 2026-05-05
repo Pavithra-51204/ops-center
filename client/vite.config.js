@@ -8,9 +8,9 @@ export default defineConfig({
     strictPort: false,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:5000',
+        target: 'https://ops-center.onrender.com',
         changeOrigin: true,
-        secure: false,
+        secure: true,
         configure: (proxy) => {
           proxy.on('error', (err, req) => {
             console.error(`[vite:proxy] ❌ ${req.method} ${req.url} failed: ${err.code}`);
@@ -18,13 +18,15 @@ export default defineConfig({
         },
       },
       '/socket.io': {
-        target: 'http://127.0.0.1:5000',
+        target: 'https://ops-center.onrender.com',
         ws: true,
         changeOrigin: true,
+        secure: true,
       },
       '/uploads': {
-        target: 'http://127.0.0.1:5000',
+        target: 'https://ops-center.onrender.com',
         changeOrigin: true,
+        secure: true,
       },
     },
   },

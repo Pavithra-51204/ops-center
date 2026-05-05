@@ -1,10 +1,17 @@
 import { io } from 'socket.io-client';
 
+// In dev, Vite proxies /socket.io → Render via vite.config.js
+// In production, connect directly to the deployed backend
+const SOCKET_URL =
+  import.meta.env.MODE === 'production'
+    ? 'https://ops-center.onrender.com'
+    : '/';
+
 let socket = null;
 
 export const getSocket = () => {
   if (!socket) {
-    socket = io('/', {
+    socket = io(SOCKET_URL, {
       withCredentials: true,
       autoConnect: false,
       reconnection: true,

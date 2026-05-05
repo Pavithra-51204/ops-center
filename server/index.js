@@ -15,24 +15,24 @@ const socketHandler = require('./lib/socketHandler');
 const app = express();
 const server = http.createServer(app);
 
-// Use environment variable for production (Vercel URL) or local dev port 5174
-// Tip: In Render, set CLIENT_URL to your Vercel address (e.g., https://ops-center.vercel.app)
-const CLIENT_URL = process.env.CLIENT_URL || 'http://127.0.0.1:5174';
+// Allow requests from any origin (any IP, port, or URL)
+const corsOptions = {
+  origin: true,       // mirrors the request origin — works with credentials
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+};
 
 // Socket.io setup
 const io = new Server(server, {
   cors: {
-    origin: CLIENT_URL,
+    origin: true,
     methods: ['GET', 'POST', 'PATCH'],
     credentials: true,
   },
 });
 
 // Middleware
-app.use(cors({
-  origin: CLIENT_URL,
-  credentials: true,
-}));
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '50kb' }));
 app.use(cookieParser());
 
