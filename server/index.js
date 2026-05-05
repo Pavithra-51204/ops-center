@@ -61,6 +61,6 @@ connectDB().then(() => {
   // Use '0.0.0.0' for deployment so Render's network can route traffic to your app
   server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Ops-Center server running on port ${PORT}`);
-    console.log(`📡 Accepting connections from: ${CLIENT_URL}`);
+    console.log(`📡 CORS: accepting requests from all origins`);
   });
 });
